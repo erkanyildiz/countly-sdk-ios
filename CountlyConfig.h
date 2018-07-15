@@ -168,6 +168,21 @@ extern NSString* const CLYConsentAppleWatch;
 @property (nonatomic) NSTimeInterval updateSessionPeriod;
 
 /**
+ * For handling sessions manually.
+ * @discussion If set, SDK does not handle beginning, updating and ending sessions automatically. Methods @c beginSession, @c updateSession and @c endSession need to be called manually.
+ */
+@property (nonatomic) BOOL manualSessionHandling;
+
+/**
+ * For ignoring session cooldown feature on Countly Server.
+ * @discussion By default, Countly Server extends sessions that end and start again within 15 seconds (configurable on Countly Server), and they are counted as one continuous season.
+ * @discussion If set, SDK sends an additional parameter with all session requests to inform Countly Server about session cooldown feature is not needed.
+ */
+@property (nonatomic) BOOL ignoreSessionCooldown;
+
+#pragma mark -
+
+/**
  * Event send threshold is used for sending queued events to Countly Server when number of recorded events reaches to it, without waiting for next update session defined by @c updateSessionPeriod.
  * @discussion If not set, it will be 10 for @c iOS, @c tvOS & @c macOS, and 3 for @c watchOS by default.
  */
@@ -188,12 +203,6 @@ extern NSString* const CLYConsentAppleWatch;
 @property (nonatomic) BOOL alwaysUsePOST;
 
 #pragma mark -
-
-/**
- * For handling sessions manually.
- * @discussion If set, SDK does not handle beginning, updating and ending sessions automatically. Methods @c beginSession, @c updateSession and @c endSession need to be called manually.
- */
-@property (nonatomic) BOOL manualSessionHandling;
 
 /**
  * For enabling automatic handling of Apple Watch related features.

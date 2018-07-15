@@ -33,6 +33,7 @@ NSString* const kCountlyQSKeySDKName          = @"sdk_name";
 NSString* const kCountlyQSKeySessionBegin     = @"begin_session";
 NSString* const kCountlyQSKeySessionDuration  = @"session_duration";
 NSString* const kCountlyQSKeySessionEnd       = @"end_session";
+NSString* const kCountlyQSKeySessionIgnore    = @"ignore_cooldown";
 
 NSString* const kCountlyQSKeyPushTokenSession = @"token_session";
 NSString* const kCountlyQSKeyPushTokeniOS     = @"ios_token";
@@ -219,6 +220,9 @@ const NSInteger kCountlyGETRequestMaxLength = 2048;
     if (!CountlyConsentManager.sharedInstance.consentForLocation || CountlyLocationManager.sharedInstance.isLocationInfoDisabled)
         queryString = [queryString stringByAppendingFormat:@"&%@=%@", kCountlyQSKeyLocation, @""];
 
+    if (CountlyCommon.sharedInstance.ignoreSessionCooldown)
+        queryString = [queryString stringByAppendingFormat:@"&%@=%@", kCountlyQSKeySessionIgnore, @"1"];
+
     [CountlyPersistency.sharedInstance addToQueue:queryString];
 
     [self proceedOnQueue];
@@ -231,6 +235,9 @@ const NSInteger kCountlyGETRequestMaxLength = 2048;
 
     NSString* queryString = [[self queryEssentials] stringByAppendingFormat:@"&%@=%d",
                              kCountlyQSKeySessionDuration, (int)[self sessionLengthInSeconds]];
+
+    if (CountlyCommon.sharedInstance.ignoreSessionCooldown)
+        queryString = [queryString stringByAppendingFormat:@"&%@=%@", kCountlyQSKeySessionIgnore, @"1"];
 
     [CountlyPersistency.sharedInstance addToQueue:queryString];
 
@@ -245,6 +252,9 @@ const NSInteger kCountlyGETRequestMaxLength = 2048;
     NSString* queryString = [[self queryEssentials] stringByAppendingFormat:@"&%@=%@&%@=%d",
                              kCountlyQSKeySessionEnd, @"1",
                              kCountlyQSKeySessionDuration, (int)[self sessionLengthInSeconds]];
+
+    if (CountlyCommon.sharedInstance.ignoreSessionCooldown)
+        queryString = [queryString stringByAppendingFormat:@"&%@=%@", kCountlyQSKeySessionIgnore, @"1"];
 
     [CountlyPersistency.sharedInstance addToQueue:queryString];
 

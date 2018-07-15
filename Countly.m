@@ -88,10 +88,12 @@
     CountlyPersistency.sharedInstance.eventSendThreshold = config.eventSendThreshold;
     CountlyPersistency.sharedInstance.storedRequestsLimit = MAX(1, config.storedRequestsLimit);
 
-    CountlyCommon.sharedInstance.manualSessionHandling = config.manualSessionHandling;
     CountlyCommon.sharedInstance.enableAppleWatch = config.enableAppleWatch;
     CountlyCommon.sharedInstance.enableAttribution = config.enableAttribution;
 
+    CountlyCommon.sharedInstance.updateSessionPeriod = config.updateSessionPeriod;
+    CountlyCommon.sharedInstance.manualSessionHandling = config.manualSessionHandling;
+    CountlyCommon.sharedInstance.ignoreSessionCooldown = config.ignoreSessionCooldown;
     if (!CountlyCommon.sharedInstance.manualSessionHandling)
         [CountlyConnectionManager.sharedInstance beginSession];
 
@@ -137,7 +139,7 @@
 //    if ([config.features containsObject:CLYAPM])
 //        [CountlyAPM.sharedInstance startAPM];
 
-    timer = [NSTimer scheduledTimerWithTimeInterval:config.updateSessionPeriod target:self selector:@selector(onTimer:) userInfo:nil repeats:YES];
+    timer = [NSTimer scheduledTimerWithTimeInterval:CountlyCommon.sharedInstance.updateSessionPeriod target:self selector:@selector(onTimer:) userInfo:nil repeats:YES];
     [NSRunLoop.mainRunLoop addTimer:timer forMode:NSRunLoopCommonModes];
 
     [CountlyCommon.sharedInstance startAppleWatchMatching];

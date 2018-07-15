@@ -64,7 +64,10 @@ extern NSString* const kCountlySDKName;
 @property (nonatomic) BOOL enableDebug;
 @property (nonatomic) BOOL enableAppleWatch;
 @property (nonatomic) BOOL enableAttribution;
+
+@property (nonatomic) NSTimeInterval updateSessionPeriod;
 @property (nonatomic) BOOL manualSessionHandling;
+@property (nonatomic) BOOL ignoreSessionCooldown;
 
 void CountlyInternalLog(NSString *format, ...) NS_FORMAT_FUNCTION(1,2);
 
