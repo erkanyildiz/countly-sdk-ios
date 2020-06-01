@@ -296,8 +296,7 @@ const CGFloat kCountlyStarRatingButtonSize = 40.0;
 
     WKWebView* webView = [WKWebView.alloc initWithFrame:webVC.view.bounds];
     [webVC.view addSubview:webView];
-    NSURL* widgetDisplayURL = [self widgetDisplayURL:widgetID];
-    [webView loadRequest:[NSURLRequest requestWithURL:widgetDisplayURL]];
+    [webView loadRequest:[self widgetDisplayRequest:widgetID]];
 
     CLYButton* dismissButton = [CLYButton dismissAlertButton];
     dismissButton.onClick = ^(id sender)
@@ -349,7 +348,7 @@ const CGFloat kCountlyStarRatingButtonSize = 40.0;
     }    
 }
 
-- (NSURL *)widgetDisplayURL:(NSString *)widgetID
+- (NSURLRequest *)widgetDisplayRequest:(NSString *)widgetID
 {
     NSString* queryString = [CountlyConnectionManager.sharedInstance queryEssentials];
 
@@ -359,12 +358,23 @@ const CGFloat kCountlyStarRatingButtonSize = 40.0;
 
     queryString = [CountlyConnectionManager.sharedInstance appendChecksum:queryString];
 
-    NSString* URLString = [NSString stringWithFormat:@"%@%@?%@",
-                           CountlyConnectionManager.sharedInstance.host,
-                           kCountlyFeedbackEndpoint,
-                           queryString];
 
-    return [NSURL URLWithString:URLString];
+    NSString* serverFeedbackEndpoint = [CountlyConnectionManager.sharedInstance.host stringByAppendingFormat:@"%@",
+                                        kCountlyFeedbackEndpoint];
+
+    if (CountlyConnectionManager.sharedInstance.alwaysUsePOST)
+    {
+        NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:serverFeedbackEndpoint]];
+        request.HTTPMethod = @"POST";
+        request.HTTPBody = [queryString cly_dataUTF8];
+        return  request.copy;
+    }
+    else
+    {
+        NSString* withQueryString = [serverFeedbackEndpoint stringByAppendingFormat:@"?%@", queryString];
+        NSURLRequest* request = [NSURLRequest requestWithURL:[NSURL URLWithString:withQueryString]];
+        return request;
+    }
 }
 
 - (BOOL)isDeviceTargetedByWidget:(NSDictionary *)widgetInfo
